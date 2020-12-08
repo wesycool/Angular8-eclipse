@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="products-ut-wo-db">
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <property name="context-root" value="products-ut-wo-db"/>
+        <property name="java-output-path" value="/products-ut-wo-db/build/classes"/>
+    </wb-module>
+</project-modules>

@@ -1,0 +1,82 @@
+package com.albert.test;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Test;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.albert.controller.ProductRestURIConstants;
+import com.albert.model.Product;
+import static org.junit.Assert.*;
+public class TestExample1 
+{
+	public static final String SERVER_URI = "http://localhost:8080/products-ut-wo-db";
+	
+	
+	//http://localhost:8080/products-ut-wo-db/rest/emp/creates
+	//create new employee, method = RequestMethod.POST
+	@Test
+	public void testCreateProduct() {
+		RestTemplate restTemplate = new RestTemplate();
+		Product emp = new Product();
+		emp.setId(1);
+		emp.setName("Albert Lamr");
+		try
+		{
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonInString = mapper.writeValueAsString(emp);
+			System.out.println("jsonInString:"+jsonInString);
+			Product response = restTemplate.postForObject(SERVER_URI+ProductRestURIConstants.CREATE_PRODUCT, emp, Product.class);
+			assertNotNull(response);
+			printProductData(response);
+		}
+		catch(JsonGenerationException e)
+		{
+			e.printStackTrace();
+		}
+		catch(JsonMappingException e)
+		{
+			e.printStackTrace();
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public static void printProductData(Product product){
+		System.out.println("ID="+product.getId()+",Name="+product.getName());
+	}
+	
+	//http://localhost:8080/products-ut-wo-db/rest/emp/1
+	//Get employee with employeeId 1, method = RequestMethod.GET
+		@Test
+		public  void testGetProduct() {
+			RestTemplate restTemplate = new RestTemplate();
+			Product emp = restTemplate.getForObject(SERVER_URI+"/rest/product/1", Product.class);
+			printProductData(emp);
+			assertNotNull(emp);
+	}
+		
+	
+	//http://localhost:8080/products-ut-wo-db/rest/products
+	//Get all productss,  method = RequestMethod.GET
+	@Test
+	public void testGetAllProduct() {
+			RestTemplate restTemplate = new RestTemplate();
+			//we can't get List<Employee> because JSON convertor doesn't know the type of
+			//object in the list and hence convert it to default JSON object type LinkedHashMap
+			List<LinkedHashMap> emps = restTemplate.getForObject(SERVER_URI+ProductRestURIConstants.GET_ALL_PRODUCTS, List.class);
+			System.out.println(emps.size());
+			for(LinkedHashMap map : emps){
+				System.out.println("ID="+map.get("id")+",Name="+map.get("name")+",CreatedDate="+map.get("createdDate"));;
+			}
+		}
+}
